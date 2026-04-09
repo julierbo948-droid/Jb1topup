@@ -1539,7 +1539,7 @@ async def handle_duplicate_photo(message: types.Message):
                 "⚠️ <b>ပုံတူနေပါတယ်!</b>\n\n"
                 f"ဒီပုံကို အရင်က <a href='{target_link}'>ဒီနေရာမှာ</a> ပို့ထားဖူးပါတယ်။"
             )
-            await message.reply(alert_text, parse_mode=ParseMode."HTML", reply_markup=keyboard)
+            await message.reply(alert_text, parse_mode="HTML", reply_markup=keyboard)
         else:
             await message.reply("⚠️ **ပုံတူနေပါတယ်!**\n(Admin သာ Link ကြည့်ခွင့်ရှိသည်)")
     else:
