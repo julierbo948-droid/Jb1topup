@@ -334,17 +334,17 @@ async def execute_buy_process(message, lines, regex_pattern, currency, packages_
 
             await message.reply(report, parse_mode=ParseMode.HTML)
 
-@dp.message(or_f(Command("add"), F.text.regexp(r"(?i)^\.add(?:$|\s+)")))
-async def add_reseller(message: types.Message):
-    if message.from_user.id != OWNER_ID: return await message.reply("You are not the Owner.")
-    parts = message.text.split()
-    if len(parts) < 2: return await message.reply("`/add <user_id>`")
-    target_id = parts[1].strip()
-    if not target_id.isdigit(): return await message.reply("Please enter the User ID in numbers only.")
-    if await db.add_reseller(target_id, f"User_{target_id}"):
-        await message.reply(f"✅ Reseller ID `{target_id}` has been approved.")
-    else:
-        await message.reply(f"Reseller ID `{target_id}` is already in the list.")
+#@dp.message(or_f(Command("add"), F.text.regexp(r"(?i)^\.add(?:$|\s+)")))
+#async def add_reseller(message: types.Message):
+#    if message.from_user.id != OWNER_ID: return await message.reply("You are not the Owner.")
+#    parts = message.text.split()
+#    if len(parts) < 2: return await message.reply("`/add <user_id>`")
+#    target_id = parts[1].strip()
+#    if not target_id.isdigit(): return await message.reply("Please enter the User ID in numbers only.")
+#    if await db.add_reseller(target_id, f"User_{target_id}"):
+#        await message.reply(f"✅ Reseller ID `{target_id}` has been approved.")
+#    else:
+#        await message.reply(f"Reseller ID `{target_id}` is already in the list.")
 
 @dp.message(or_f(Command("remove"), F.text.regexp(r"(?i)^\.remove(?:$|\s+)")))
 async def remove_reseller(message: types.Message):
