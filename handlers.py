@@ -731,15 +731,17 @@ async def auto_calculator(message: types.Message):
         else: 
             formatted_result = str(result)
             
-        # Inline Button ဖန်တီးခြင်း
-        # switch_inline_query_current_chat ကို သုံးပြီး result ကို copy ကူးရလွယ်အောင် လုပ်လို့ရပါတယ်
+        # Message ထဲမှာ Premium Emoji ပြမယ်
+        # Emoji ID ကို သင့်မှာရှိတဲ့ ID နဲ့ လဲလိုက်ပါ
+        premium_emoji = "<tg-emoji emoji-id='6319056439096644016'>✅</tg-emoji>"
+        
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="📋 Copy Result", switch_inline_query_current_chat=formatted_result)]
+            [InlineKeyboardButton(text="📥 ᴄᴏᴘʏ ", switch_inline_query_current_chat=formatted_result)]
         ])
         
-        # HTML mode နဲ့ Result ကို code format (monospace) ပြပေးခြင်း
+        # HTML mode နဲ့ ပို့မယ်
         await message.reply(
-            f"<b>{expr} =</b> <code>{formatted_result}</code>", 
+            f"{premium_emoji} <b>{expr} =</b> <code>{formatted_result}</code>", 
             parse_mode="HTML", 
             reply_markup=keyboard
         )
