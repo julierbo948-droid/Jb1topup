@@ -722,12 +722,30 @@ async def auto_calculator(message: types.Message):
     try:
         expr = message.text.strip()
         if re.match(r"^09[-\s]?\d+", expr): return
+        
         clean_expr = expr.replace(" ", "")
         result = eval(clean_expr, {"__builtins__": None})
-        if isinstance(result, float): formatted_result = f"{result:.4f}".rstrip('0').rstrip('.')
-        else: formatted_result = str(result)
-        await message.reply(f"{expr} = {formatted_result}")
-    except Exception: pass
+        
+        if isinstance(result, float): 
+            formatted_result = f"{result:.4f}".rstrip('0').rstrip('.')
+        else: 
+            formatted_result = str(result)
+            
+        # Inline Button ဖန်တီးခြင်း
+        # switch_inline_query_current_chat ကို သုံးပြီး result ကို copy ကူးရလွယ်အောင် လုပ်လို့ရပါတယ်
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="📋 Copy Result", switch_inline_query_current_chat=formatted_result)]
+        ])
+        
+        # HTML mode နဲ့ Result ကို code format (monospace) ပြပေးခြင်း
+        await message.reply(
+            f"<b>{expr} =</b> <code>{formatted_result}</code>", 
+            parse_mode="HTML", 
+            reply_markup=keyboard
+        )
+        
+    except Exception: 
+        pass
 
 @dp.message(or_f(Command("cookies"), F.text.regexp(r"(?i)^\.cookies$")))
 async def check_cookie_status(message: types.Message):
