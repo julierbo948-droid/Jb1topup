@@ -1120,7 +1120,7 @@ async def handle_check_role(message: types.Message):
                 InlineKeyboardButton(text="Bᴏɴᴜs 150+150", callback_data="ignore", style=style_150)
             ],
             [
-                InlineKeyboardButton(text="Bᴏɴᴜs 250+250", callback_data="ignore", style=style_250),
+                InlineKeyboardButton(text="<tg-emoji emoji-id='6319056439096644016'>✅</tg-emoji> Bᴏɴᴜs 250+250", callback_data="ignore", style=style_250),
                 InlineKeyboardButton(text="Bᴏɴᴜs 500+500", callback_data="ignore", style=style_500)
             ]
         ])
