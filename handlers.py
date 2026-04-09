@@ -1354,40 +1354,6 @@ async def format_and_copy_text(message: types.Message):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[[copy_btn]])
     await message.reply(formatted_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
 
-# handlers.py ရဲ့ အောက်ဆုံးမှာ ထည့်ပါ
-
-@dp.message(F.photo)
-async def handle_duplicate_photo(message: types.Message):
-    photo = message.photo[-1] 
-    uid = photo.file_unique_id
-    chat_id = message.chat.id
-    msg_id = message.message_id
-
-    # db. ဆိုတာလေး ပါရပါမယ် (import database as db လို့ ရေးထားလို့ပါ)
-    existing = await db.check_photo_exists(uid)
-
-    if existing:
-        old_chat, old_msg = existing
-        link_chat_id = str(old_chat).replace("-100", "")
-        target_link = f"https://t.me/c/{link_chat_id}/{old_msg}"
-
-        member = await bot.get_chat_member(chat_id, message.from_user.id)
-        
-        if member.status in [types.ChatMemberStatus.ADMINISTRATOR, types.ChatMemberStatus.CREATOR] or message.from_user.id == OWNER_ID:
-            keyboard = InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(text="🔗 မူရင်းပုံသို့ သွားရန်", url=target_link)]
-            ])
-            alert_text = (
-                "⚠️ <b>ပုံတူနေပါတယ်!</b>\n\n"
-                f"ဒီပုံကို အရင်က <a href='{target_link}'>ဒီနေရာမှာ</a> ပို့ထားဖူးပါတယ်။"
-            )
-            await message.reply(alert_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
-        else:
-            await message.reply("⚠️ **ပုံတူနေပါတယ်!**\n(Admin သာ Link ကြည့်ခွင့်ရှိသည်)")
-    else:
-        # ဒီမှာလည်း db. နဲ့ ခေါ်ရပါမယ်
-        await db.save_photo(uid, chat_id, msg_id)
-
 @dp.message(or_f(Command("maintenance"), F.text.regexp(r"(?i)^\.maintenance(?:$|\s+)")))
 async def toggle_maintenance(message: types.Message):
     if message.from_user.id != OWNER_ID:
@@ -1545,3 +1511,37 @@ async def send_welcome(message: types.Message):
             f"📞 {'Cᴏɴᴛᴀᴄᴛ ᴜs' :<11}: @Julierbo2_151102"
         )
         await message.reply(fallback_text, parse_mode=ParseMode.HTML)
+
+# handlers.py ရဲ့ အောက်ဆုံးမှာ ထည့်ပါ
+
+@dp.message(F.photo)
+async def handle_duplicate_photo(message: types.Message):
+    photo = message.photo[-1] 
+    uid = photo.file_unique_id
+    chat_id = message.chat.id
+    msg_id = message.message_id
+
+    # db. ဆိုတာလေး ပါရပါမယ် (import database as db လို့ ရေးထားလို့ပါ)
+    existing = await db.check_photo_exists(uid)
+
+    if existing:
+        old_chat, old_msg = existing
+        link_chat_id = str(old_chat).replace("-100", "")
+        target_link = f"https://t.me/c/{link_chat_id}/{old_msg}"
+
+        member = await bot.get_chat_member(chat_id, message.from_user.id)
+        
+        if member.status in [types.ChatMemberStatus.ADMINISTRATOR, types.ChatMemberStatus.CREATOR] or message.from_user.id == OWNER_ID:
+            keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="🔗 မူရင်းပုံသို့ သွားရန်", url=target_link)]
+            ])
+            alert_text = (
+                "⚠️ <b>ပုံတူနေပါတယ်!</b>\n\n"
+                f"ဒီပုံကို အရင်က <a href='{target_link}'>ဒီနေရာမှာ</a> ပို့ထားဖူးပါတယ်။"
+            )
+            await message.reply(alert_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
+        else:
+            await message.reply("⚠️ **ပုံတူနေပါတယ်!**\n(Admin သာ Link ကြည့်ခွင့်ရှိသည်)")
+    else:
+        # ဒီမှာလည်း db. နဲ့ ခေါ်ရပါမယ်
+        await db.save_photo(uid, chat_id, msg_id)
