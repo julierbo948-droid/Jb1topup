@@ -1378,8 +1378,8 @@ async def handle_duplicate_photo(message: types.Message):
                 [InlineKeyboardButton(text="🔗 မူရင်းပုံသို့ သွားရန်", url=target_link)]
             ])
             alert_text = (
-                "⚠️ **ပုံတူနေပါတယ်!**\n\n"
-                f"ဒီပုံကို အရင်က [ဒီမှာ]({target_link}) ပို့ထားဖူးပါတယ်။"
+                "⚠️ <b>ပုံတူနေပါတယ်!</b>\n\n"
+                f"ဒီပုံကို အရင်က <a href='{target_link}'>ဒီနေရာမှာ</a> ပို့ထားဖူးပါတယ်။"
             )
             await message.reply(alert_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
         else:
