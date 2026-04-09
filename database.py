@@ -188,3 +188,21 @@ async def remove_scammer(game_id: str):
 async def get_all_scammers():
     cursor = db.scammers.find({})
     return [doc["game_id"] async for doc in cursor]
+
+# --- Photo Tracker Functions ---
+
+async def check_photo_exists(file_unique_id):
+    """database ထဲမှာ unique id ရှိမရှိ စစ်ပြီး chat_id နဲ့ msg_id ကို return ပြန်ပေးရန်"""
+    photo_doc = await db.photos.find_one({"file_unique_id": file_unique_id})
+    if photo_doc:
+        return photo_doc.get("chat_id"), photo_doc.get("message_id")
+    return None
+
+async def save_photo(file_unique_id, chat_id, message_id):
+    """database ထဲမှာ ပုံအသစ်ရဲ့ အချက်အလက်ကို သိမ်းဆည်းရန်"""
+    await db.photos.insert_one({
+        "file_unique_id": file_unique_id,
+        "chat_id": chat_id,
+        "message_id": message_id,
+        "timestamp": datetime.datetime.now(MMT)
+    })
