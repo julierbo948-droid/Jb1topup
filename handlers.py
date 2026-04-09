@@ -736,7 +736,7 @@ async def auto_calculator(message: types.Message):
         premium_emoji = "<tg-emoji emoji-id='6319056439096644016'>✅</tg-emoji>"
         
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="{premium_emoji}  ᴄᴏᴘʏ ", switch_inline_query_current_chat=formatted_result)]
+            [InlineKeyboardButton(text=" ᴄᴏᴘʏ ", switch_inline_query_current_chat=formatted_result)]
         ])
         
         # HTML mode နဲ့ ပို့မယ်
