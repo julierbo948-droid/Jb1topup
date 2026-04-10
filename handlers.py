@@ -731,20 +731,22 @@ async def auto_calculator(message: types.Message):
         else: 
             formatted_result = str(result)
 
+        full_copy_text = f"{expr} = {formatted_result}"
+
         # သင်အသုံးပြုနေတဲ့ Library ရဲ့ ပုံစံအတိုင်း Copy Button ဖန်တီးခြင်း
         try:
             # Telegram API 7.0+ ရဲ့ တိုက်ရိုက် Copy ကူးပေးတဲ့ Feature
             from aiogram.types import CopyTextButton
             copy_btn = InlineKeyboardButton(
                 text=" ᴄᴏᴘʏ ", 
-                copy_text=CopyTextButton(text=formatted_result),
+                copy_text=CopyTextButton(text=full_copy_text),
                 style="primary" # အရောင်ပါအောင် style ထည့်ခြင်း
             )
         except ImportError:
             # အပေါ်က method အလုပ်မလုပ်ရင် switch_inline သုံးမယ်
             copy_btn = InlineKeyboardButton(
                 text=" ᴄᴏᴘʏ ", 
-                switch_inline_query_current_chat=formatted_result,
+                switch_inline_query_current_chat=full_copy_text,
                 style="primary"
             )
 
