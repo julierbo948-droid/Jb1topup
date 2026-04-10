@@ -740,14 +740,14 @@ async def auto_calculator(message: types.Message):
             copy_btn = InlineKeyboardButton(
                 text=" ᴄᴏᴘʏ ", 
                 copy_text=CopyTextButton(text=full_copy_text),
-                style="ignore" # အရောင်ပါအောင် style ထည့်ခြင်း
+                style="danger" # အရောင်ပါအောင် style ထည့်ခြင်း
             )
         except ImportError:
             # အပေါ်က method အလုပ်မလုပ်ရင် switch_inline သုံးမယ်
             copy_btn = InlineKeyboardButton(
                 text=" ᴄᴏᴘʏ ", 
                 switch_inline_query_current_chat=full_copy_text,
-                style="ignore"
+                style="danger"
             )
 
         keyboard = InlineKeyboardMarkup(inline_keyboard=[[copy_btn]])
