@@ -738,16 +738,18 @@ async def auto_calculator(message: types.Message):
             # Telegram API 7.0+ ရဲ့ တိုက်ရိုက် Copy ကူးပေးတဲ့ Feature
             from aiogram.types import CopyTextButton
             copy_btn = InlineKeyboardButton(
-                text=" ᴄᴏᴘʏ ", 
+                text=" ᴄᴏᴘʏ: {formatted_result} ", 
                 copy_text=CopyTextButton(text=full_copy_text),
-                style="danger" # အရောင်ပါအောင် style ထည့်ခြင်း
+                style="danger" 
+                icon_custom_emoji_id="5456498809875995940"# အရောင်ပါအောင် style ထည့်ခြင်း
             )
         except ImportError:
             # အပေါ်က method အလုပ်မလုပ်ရင် switch_inline သုံးမယ်
             copy_btn = InlineKeyboardButton(
-                text=" ᴄᴏᴘʏ ", 
+                text=" ᴄᴏᴘʏ: {formatted_result} ", 
                 switch_inline_query_current_chat=full_copy_text,
                 style="danger"
+                icon_custom_emoji_id="5456498809875995940"
             )
 
         keyboard = InlineKeyboardMarkup(inline_keyboard=[[copy_btn]])
