@@ -736,14 +736,14 @@ async def auto_calculator(message: types.Message):
             # Telegram API 7.0+ ရဲ့ တိုက်ရိုက် Copy ကူးပေးတဲ့ Feature
             from aiogram.types import CopyTextButton
             copy_btn = InlineKeyboardButton(
-                text="<tg-emoji emoji-id='6319056439096644016၂'>✨</tg-emoji> ᴄᴏᴘʏ ", 
+                text=" ᴄᴏᴘʏ ", 
                 copy_text=CopyTextButton(text=formatted_result),
                 style="primary" # အရောင်ပါအောင် style ထည့်ခြင်း
             )
         except ImportError:
             # အပေါ်က method အလုပ်မလုပ်ရင် switch_inline သုံးမယ်
             copy_btn = InlineKeyboardButton(
-                text=" ᴄᴏᴘʏ ", 
+                text="<tg-emoji emoji-id='6319056439096644016၂'>✨</tg-emoji> ᴄᴏᴘʏ ", 
                 switch_inline_query_current_chat=formatted_result,
                 style="primary"
             )
