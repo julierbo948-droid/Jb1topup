@@ -1346,94 +1346,49 @@ async def check_system_balance(message: types.Message):
         await loading_msg.edit_text(report, parse_mode=ParseMode.HTML)
     except Exception as e: await loading_msg.edit_text(f"❌ Error calculating system balance: {e}")
 
-@dp.message(or_f(F.text.regexp(r"^[bB]?\s*\d{7,}.*$"), F.caption.regexp(r"^[bB]?\s*\d{7,}.*$")))
+@dp.message(or_f(F.text.regexp(r"^\d{7,}(?:\s+\(?\d+\)?)?\s*.*$"), F.caption.regexp(r"^\d{7,}(?:\s+\(?\d+\)?)?\s*.*$")))
 async def format_and_copy_text(message: types.Message):
     raw_text = (message.text or message.caption).strip()
-    user_id = message.from_user.id
-    
-    # (၁) b ပါမပါ စစ်ဆေးပြီး Order ဟုတ်မဟုတ် ခွဲခြားခြင်း
-    is_order = raw_text.lower().startswith('b')
-    clean_text = raw_text[1:].strip() if is_order else raw_text
+    if re.match(r"^\d{7,}$", raw_text): formatted_raw = raw_text
+    elif re.match(r"^\d{7,}\s+\d+", raw_text):
+        match = re.match(r"^(\d{7,})\s+(\d+)\s*(.*)$", raw_text)
+        if match:
+            player_id, zone_id, suffix = match.group(1), match.group(2), match.group(3).strip()
+            if suffix:
+                clean_suffix = suffix.lower().replace(" ", "")
+                wp_match = re.match(r"^(\d*)wp(\d*)$", clean_suffix)
+                if wp_match:
+                    num_str = wp_match.group(1) + wp_match.group(2)
+                    processed_suffix = "wp" if num_str in ["", "1"] else f"wp{num_str}"
+                else: processed_suffix = suffix
+                formatted_raw = f"{player_id} ({zone_id}) {processed_suffix}"
+            else: formatted_raw = f"{player_id} ({zone_id})"
+        else: formatted_raw = raw_text
+    elif re.match(r"^\d{7,}\s*\(\d+\)", raw_text):
+        match = re.match(r"^(\d{7,})\s*\((\d+)\)\s*(.*)$", raw_text)
+        if match:
+            player_id, zone_id, suffix = match.group(1), match.group(2), match.group(3).strip()
+            if suffix:
+                clean_suffix = suffix.lower().replace(" ", "")
+                wp_match = re.match(r"^(\d*)wp(\d*)$", clean_suffix)
+                if wp_match:
+                    num_str = wp_match.group(1) + wp_match.group(2)
+                    processed_suffix = "wp" if num_str in ["", "1"] else f"wp{num_str}"
+                else: processed_suffix = suffix
+                formatted_raw = f"{player_id} ({zone_id}) {processed_suffix}"
+            else: formatted_raw = f"{player_id} ({zone_id})"
+        else: formatted_raw = raw_text
+    else: formatted_raw = raw_text
 
-    # (၂) ID, Zone နှင့် Suffix များကို Regex ဖြင့် ခွဲထုတ်ခြင်း
-    # Case A: 1234567 1234 ပုံစံ သို့မဟုတ် Case B: 1234567 (1234) ပုံစံ နှစ်မျိုးလုံးရသည်
-    match = re.match(r"^(\d{7,})\s*\(?(\d+)\)?\s*(.*)$", clean_text)
-    
-    if match:
-        player_id, zone_id, suffix = match.group(1), match.group(2), match.group(3).strip()
-        
-        # WP Logic (Suffix ပါရင် Format သေသပ်အောင်လုပ်ခြင်း)
-        if suffix:
-            clean_suffix = suffix.lower().replace(" ", "")
-            wp_match = re.match(r"^(\d*)wp(\d*)$", clean_suffix)
-            if wp_match:
-                num_str = wp_match.group(1) + wp_match.group(2)
-                processed_suffix = "wp" if num_str in ["", "1"] else f"wp{num_str}"
-            else:
-                processed_suffix = suffix
-            formatted_raw = f"{player_id} ({zone_id}) {processed_suffix}"
-        else:
-            formatted_raw = f"{player_id} ({zone_id})"
-    else:
-        formatted_raw = clean_text
-
-    # (၃) Keyboard တည်ဆောက်ခြင်း
-    buttons = []
-    
-    # Copy Button (Premium Look & Color)
+    formatted_text = f"<code>{formatted_raw}</code>"
     try:
         from aiogram.types import CopyTextButton
-        copy_btn = InlineKeyboardButton(
-            text=" ᴄᴏᴘʏ ",
-            copy_text=CopyTextButton(text=formatted_raw),
-            style="primary",
-            icon_custom_emoji_id="6064451512229173110" # Copy Icon ID
-        )
+        copy_btn = InlineKeyboardButton(text="ᴄᴏᴘʏ", copy_text=CopyTextButton(text=formatted_raw), style="primary")
     except ImportError:
-        copy_btn = InlineKeyboardButton(
-            text=" ᴄᴏᴘʏ ",
-            switch_inline_query_current_chat=formatted_raw,
-            style="primary",
-            icon_custom_emoji_id="6064451512229173110"
-        )
-    
-    buttons.append([copy_btn])
+        copy_btn = InlineKeyboardButton(text="ᴄᴏᴘʏ", switch_inline_query=formatted_raw, style="primary")
 
-    # (၄) Done Button Logic (b ပါမှ နှင့် Admin ဖြစ်မှ ပြမည်)
-    # OWNER_ID ကို config ထဲကအတိုင်း စစ်ပါ
-    if is_order and str(user_id) == str(OWNER_ID):
-        done_btn = InlineKeyboardButton(
-            text=" ✅ ᴅᴏɴᴇ (ᴀᴜᴛᴏ)",
-            callback_data=f"auto_done_{player_id}_{zone_id}",
-            style="success",
-            icon_custom_emoji_id="5318760565902947324" # Success Icon ID
-        )
-        buttons.append([done_btn])
-
-    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    
-    # (၅) အကြောင်းပြန်ခြင်း
-    await message.reply(
-        f"<code>{formatted_raw}</code>",
-        parse_mode="HTML",
-        reply_markup=keyboard
-    )
-
-# (၆) Done Button နှိပ်ရင် အလုပ်လုပ်မယ့် Callback Handler
-@dp.callback_query(F.data.startswith("auto_done_"))
-async def handle_auto_done(callback: types.CallbackQuery):
-    # Player ID နဲ့ Zone ID ကို ပြန်ထုတ်ယူခြင်း
-    data = callback.data.split("_")
-    p_id, z_id = data[2], data[3]
-    
-    # ဤနေရာတွင် သင့်၏ အော်ဒါတင်သည့် function ကို ထည့်သွင်းပါ
-    # await your_auto_order_function(p_id, z_id)
-    
-    await callback.answer(f"✅ Order Done: {p_id} ({z_id})", show_alert=True)
-    await callback.message.edit_text(
-        f"<code>{callback.message.text}</code>\n\n✅ <b>Oʀᴅᴇʀ Cᴏᴍᴘʟᴇᴛᴇᴅ ʙʏ Aᴅᴍɪɴ</b>",
-        parse_mode="HTML"
-    )
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[[copy_btn]])
+    await message.reply(formatted_text, parse_mode=ParseMode.HTML, reply_markup=keyboard)
 
 @dp.message(or_f(Command("maintenance"), F.text.regexp(r"(?i)^\.maintenance(?:$|\s+)")))
 async def toggle_maintenance(message: types.Message):
