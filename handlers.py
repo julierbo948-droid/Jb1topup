@@ -730,18 +730,29 @@ async def auto_calculator(message: types.Message):
             formatted_result = f"{result:.4f}".rstrip('0').rstrip('.')
         else: 
             formatted_result = str(result)
-            
-        # Message ထဲမှာ Premium Emoji ပြမယ်
-        # Emoji ID ကို သင့်မှာရှိတဲ့ ID နဲ့ လဲလိုက်ပါ
-        premium_emoji = "<tg-emoji emoji-id='6319056439096644016'>✅</tg-emoji>"
+
+        # သင်အသုံးပြုနေတဲ့ Library ရဲ့ ပုံစံအတိုင်း Copy Button ဖန်တီးခြင်း
+        try:
+            # Telegram API 7.0+ ရဲ့ တိုက်ရိုက် Copy ကူးပေးတဲ့ Feature
+            from aiogram.types import CopyTextButton
+            copy_btn = InlineKeyboardButton(
+                text=" ᴄᴏᴘʏ ", 
+                copy_text=CopyTextButton(text=formatted_result),
+                style="primary" # အရောင်ပါအောင် style ထည့်ခြင်း
+            )
+        except ImportError:
+            # အပေါ်က method အလုပ်မလုပ်ရင် switch_inline သုံးမယ်
+            copy_btn = InlineKeyboardButton(
+                text=" ᴄᴏᴘʏ ", 
+                switch_inline_query_current_chat=formatted_result,
+                style="primary"
+            )
+
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[[copy_btn]])
         
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text=" ᴄᴏᴘʏ ", switch_inline_query_current_chat=formatted_result)]
-        ])
-        
-        # HTML mode နဲ့ ပို့မယ်
+        # Output ပြသခြင်း
         await message.reply(
-            f"{premium_emoji} <b>{expr} =</b> <code>{formatted_result}</code>", 
+            f"<b>{expr} =</b> <code>{formatted_result}</code>", 
             parse_mode="HTML", 
             reply_markup=keyboard
         )
