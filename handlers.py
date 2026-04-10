@@ -740,7 +740,7 @@ async def auto_calculator(message: types.Message):
             copy_btn = InlineKeyboardButton(
                 text=" ᴄᴏᴘʏ: {formatted_result} ", 
                 copy_text=CopyTextButton(text=full_copy_text),
-                style="danger" 
+                style="danger",
                 icon_custom_emoji_id="5456498809875995940"# အရောင်ပါအောင် style ထည့်ခြင်း
             )
         except ImportError:
@@ -748,7 +748,7 @@ async def auto_calculator(message: types.Message):
             copy_btn = InlineKeyboardButton(
                 text=" ᴄᴏᴘʏ: {formatted_result} ", 
                 switch_inline_query_current_chat=full_copy_text,
-                style="danger"
+                style="danger",
                 icon_custom_emoji_id="5456498809875995940"
             )
 
