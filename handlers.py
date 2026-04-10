@@ -764,11 +764,6 @@ async def auto_calculator(message: types.Message):
     except Exception: 
         pass
 
-@dp.message(F.custom_emoji)
-async def get_emoji_id(message: types.Message):
-    # ဒီ code က emoji ရဲ့ button ထဲမှာ သုံးလို့ရမယ့် code ကို ထုတ်ပေးပါလိမ့်မယ်
-    emoji = message.custom_emoji
-    await message.reply(f"Button ထဲမှာ သုံးရမယ့်စာသား: <code>{message.text}</code>", parse_mode="HTML")
 
 @dp.message(or_f(Command("cookies"), F.text.regexp(r"(?i)^\.cookies$")))
 async def check_cookie_status(message: types.Message):
