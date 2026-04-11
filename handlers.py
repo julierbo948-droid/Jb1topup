@@ -549,6 +549,7 @@ async def handle_topup(message: types.Message):
                     if added_amount >= 10000: fee_percent = 0.1
                     elif added_amount >= 5000: fee_percent = 0.15
                     elif added_amount >= 1000: fee_percent = 0.2
+                    elif added_amount >= 1120: fee_percent = 0.2    
                     elif added_amount >= 300: fee_percent = 0.3 
                     else: fee_percent = 0.0
 
