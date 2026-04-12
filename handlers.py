@@ -322,7 +322,7 @@ async def execute_buy_process(message, lines, regex_pattern, currency, packages_
                     report += f"GAME ID      : {res['game_id']} {res['zone_id']}\n"
                     report += f"IG NAME      : {safe_ig_name}\n"
                     report += f"ITEM         : {pr['pkg_name']} 💎| ❌\n"
-                    report += f"ERROR        : {display_err}\n\n
+                    report += f"ERROR        : {display_err}\n\n"
 
 
             report += f"DATE         : {date_str}\n"
