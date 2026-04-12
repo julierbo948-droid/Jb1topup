@@ -277,7 +277,7 @@ async def execute_buy_process(message, lines, regex_pattern, currency, packages_
             
             header_title = f"{title_prefix} {res['game_id']} ({res['zone_id']}) {res['raw_items_str'].upper()} ({currency})"
             
-            report = f"<pre><code>{header_title}\n"
+            report = f"<blockquote><pre>{header_title}\n"
             report += f"===== TRANSACTION REPORT =====\n"
 
             for pr in res['package_results']:
@@ -324,37 +324,34 @@ async def execute_buy_process(message, lines, regex_pattern, currency, packages_
                     report += f"ITEM         : {pr['pkg_name']} 💎| ❌\n"
                     report += f"ERROR        : {display_err}\n\n"
 
-# ... (အပေါ်က logic အပိုင်းတွေ အတူတူပဲထားပါ)
+# user_link ကို report ထဲကနေ လုံးဝဖယ်လိုက်ပါ (Tag ငြိတတ်လို့ပါ)
+            report = f"<blockquote><pre>{header_title}\n"
+            report += f"===== TRANSACTION REPORT =====\n\n"
+
+            # ... (success/fail logic များ)
 
             report += f"DATE         : {date_str}\n"
-            report += f"===== ACCOUNT INFO =====\n" # user_link နေရာမှာ ခေါင်းစဉ်တစ်ခုခု ပြောင်းလိုက်ပါ
+            report += f"===== ACCOUNT INFO =====\n"
             report += f"INITIAL      : ${initial_bal_for_receipt:,.2f}\n"
             report += f"FINAL        : ${new_v_bal:,.2f}\n\n"
             report += f"SUCCESS {res['success_count']} / FAIL {res['fail_count']}\n"
-            report += f"TIME TAKEN   : {time_taken_seconds} SECONDS</pre></code>"
+            report += f"TIME TAKEN   : {time_taken_seconds} SECONDS</pre></blockquote>"
 
-            # (၁) User Profile Link အတွက် Button တည်ဆောက်ခြင်း
-            # user_link က HTML format ဖြစ်နေရင် အဲ့ဒီထဲက URL ကိုပဲ ယူသုံးဖို့ လိုပါမယ်
-            # ဥပမာ tg://user?id=... ပုံစံမျိုးပေါ့
-            
-            # user_id ကို message.from_user.id သို့မဟုတ် variable ထဲကနေ ယူပါ
-            target_user_id = tg_id 
-            
+            # Button ကို အောက်မှာ သီးသန့်ပြပါ
             keyboard = InlineKeyboardMarkup(inline_keyboard=[
                 [
                     InlineKeyboardButton(
                         text="👤 Vɪᴇᴡ Usᴇʀ Pʀᴏғɪʟᴇ", 
-                        url=f"tg://user?id={target_user_id}"
+                        url=f"tg://user?id={tg_id}"
                     )
                 ]
             ])
 
-            # (၂) အကြောင်းပြန်တဲ့နေရာမှာ reply_markup ထည့်သွင်းခြင်း
-            await message.reply(
-                report, 
-                parse_mode=ParseMode.HTML, 
-                reply_markup=keyboard
-            )
+            # ပို့တဲ့အခါ parse_mode ကို HTML သေချာပေးပါ
+            await message.reply(report, parse_mode="HTML", reply_markup=keyboard)
+
+
+
 
 #@dp.message(or_f(Command("add"), F.text.regexp(r"(?i)^\.add(?:$|\s+)")))
 #async def add_reseller(message: types.Message):
