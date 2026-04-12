@@ -339,20 +339,21 @@ async def execute_buy_process(message, lines, regex_pattern, currency, packages_
             # (၁) ရလဒ်အပေါ် မူတည်ပြီး Button Style သတ်မှတ်ခြင်း
             if res['fail_count'] > 0:
                 btn_style = "danger" 
-                btn_text = f" {user_name}"
+                btn_text = f"| {user_name}"
                 btn_icon = "6194857525473451865"
             else:
                 btn_style = "success" 
-                btn_text = f" {user_name}"
+                btn_text = f"| {user_name}"
                 btn_icon = "6190228864988355594"
 
             # (၂) Keyboard တည်ဆောက်ခြင်း
             keyboard = InlineKeyboardMarkup(inline_keyboard=[
                 [
                     InlineKeyboardButton(
-                        text=btn_text, 
+                        text=btn_text,
                         url=f"tg://user?id={tg_id}",
-                        style=btn_style 
+                        style=btn_style ,
+                        icon_custom_emoji_id=btn_icon
                     )
                 ]
             ])
