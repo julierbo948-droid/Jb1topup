@@ -327,24 +327,23 @@ async def execute_buy_process(message, lines, regex_pattern, currency, packages_
                     report += f"ITEM         : {pr['pkg_name']} 💎| ❌\n"
                     report += f"ERROR        : {display_err}\n\n"
 
-
+            report += f"━━━━━━━━━━━━━━━━━━━━━\n"
             report += f"DATE         : {date_str}\n"
             report += f"===== ACCOUNT INFO =====\n"
             report += f"INITIAL      : ${initial_bal_for_receipt:,.2f}\n"
             report += f"FINAL        : ${new_v_bal:,.2f}\n\n"
-            report += f"SUCCESS {res['success_count']} / FAIL {res['fail_count']}\n"
-            report += f"TIME TAKEN   : {time_taken_seconds} SECONDS</pre></blockquote>"
+            report += f"SUCCESS {res['success_count']} / FAIL {res['fail_count']}</pre></blockquote>"
+            
 
 
             # (၁) ရလဒ်အပေါ် မူတည်ပြီး Button Style သတ်မှတ်ခြင်း
-            # အကယ်၍ fail_count က 0 ထက်များနေရင် အနီရောင်ပြမယ်၊ မရှိရင် အစိမ်းရောင်ပြမယ်
             if res['fail_count'] > 0:
-                btn_style = "danger"  # အနီရောင်
-                btn_text = f"| {user_name}"
+                btn_style = "danger" 
+                btn_text = f" {user_name}"
                 btn_icon = "6194857525473451865"
             else:
-                btn_style = "success" # အစိမ်းရောင်
-                btn_text = f"| {user_name}"
+                btn_style = "success" 
+                btn_text = f" {user_name}"
                 btn_icon = "6190228864988355594"
 
             # (၂) Keyboard တည်ဆောက်ခြင်း
@@ -353,12 +352,12 @@ async def execute_buy_process(message, lines, regex_pattern, currency, packages_
                     InlineKeyboardButton(
                         text=btn_text, 
                         url=f"tg://user?id={tg_id}",
-                        style=btn_style # ဤနေရာတွင် style ကို dynamic ထည့်ထားပါသည်
+                        style=btn_style 
                     )
                 ]
             ])
 
-            # (၃) Report ပို့ခြင်း
+
             try:
                 await message.reply(
                     report, 
@@ -366,7 +365,6 @@ async def execute_buy_process(message, lines, regex_pattern, currency, packages_
                     reply_markup=keyboard
                 )
             except Exception as e:
-                # HTML parse error တက်ခဲ့လျှင် variable များကို escape လုပ်ရန် လိုပါမည်
                 print(f"Final Report Error: {e}")
                 await message.reply(f"❌ Report Formatting Error!")
 
