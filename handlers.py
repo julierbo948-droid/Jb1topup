@@ -332,19 +332,40 @@ async def execute_buy_process(message, lines, regex_pattern, currency, packages_
             report += f"SUCCESS {res['success_count']} / FAIL {res['fail_count']}\n"
             report += f"TIME TAKEN   : {time_taken_seconds} SECONDS</pre></blockquote>"
 
-            # Button ကို အောက်မှာ သီးသန့်ပြပါ
+
+            # (၁) ရလဒ်အပေါ် မူတည်ပြီး Button Style သတ်မှတ်ခြင်း
+            # အကယ်၍ fail_count က 0 ထက်များနေရင် အနီရောင်ပြမယ်၊ မရှိရင် အစိမ်းရောင်ပြမယ်
+            if res['fail_count'] > 0:
+                btn_style = "danger"  # အနီရောင်
+                btn_text = f"| {user_name}"
+                btn_icon = "6194857525473451865"
+            else:
+                btn_style = "success" # အစိမ်းရောင်
+                btn_text = f"| {user_name}"
+                btn_icon = "6190228864988355594"
+
+            # (၂) Keyboard တည်ဆောက်ခြင်း
             keyboard = InlineKeyboardMarkup(inline_keyboard=[
                 [
                     InlineKeyboardButton(
-                        text="👤 Vɪᴇᴡ Usᴇʀ Pʀᴏғɪʟᴇ", 
-                        url=f"tg://user?id={tg_id}"
+                        text=btn_text, 
+                        url=f"tg://user?id={tg_id}",
+                        style=btn_style # ဤနေရာတွင် style ကို dynamic ထည့်ထားပါသည်
                     )
                 ]
             ])
 
-            # ပို့တဲ့အခါ parse_mode ကို HTML သေချာပေးပါ
-            await message.reply(report, parse_mode="HTML", reply_markup=keyboard)
-
+            # (၃) Report ပို့ခြင်း
+            try:
+                await message.reply(
+                    report, 
+                    parse_mode="HTML", 
+                    reply_markup=keyboard
+                )
+            except Exception as e:
+                # HTML parse error တက်ခဲ့လျှင် variable များကို escape လုပ်ရန် လိုပါမည်
+                print(f"Final Report Error: {e}")
+                await message.reply(f"❌ Report Formatting Error!")
 
 
 
