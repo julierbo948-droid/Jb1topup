@@ -331,7 +331,7 @@ async def execute_buy_process(message, lines, regex_pattern, currency, packages_
             report += f"INITIAL      : ${initial_bal_for_receipt:,.2f}\n"
             report += f"FINAL        : ${new_v_bal:,.2f}\n\n"
             report += f"SUCCESS {res['success_count']} / FAIL {res['fail_count']}\n"
-            report += f"TIME TAKEN   : {time_taken_seconds} SECONDS</pre></blockquote>"
+            report += f"TIME TAKEN   : {time_taken_seconds} SECONDS</pre></code>"
 
             # (၁) User Profile Link အတွက် Button တည်ဆောက်ခြင်း
             # user_link က HTML format ဖြစ်နေရင် အဲ့ဒီထဲက URL ကိုပဲ ယူသုံးဖို့ လိုပါမယ်
