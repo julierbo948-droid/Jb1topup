@@ -265,6 +265,9 @@ async def execute_buy_process(message, lines, regex_pattern, currency, packages_
         date_str = now.strftime("%m/%d/%Y, %I:%M:%S %p")
 
         for res in line_results:
+            tg_id = message.from_user.id
+            user_name = message.from_user.full_name
+
             current_wallet = await db.get_reseller(tg_id)
             initial_bal_for_receipt = current_wallet.get(v_bal_key, 0.0) if current_wallet else 0.0
             
