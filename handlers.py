@@ -1427,6 +1427,17 @@ async def check_system_balance(message: types.Message):
 @dp.message(or_f(F.text.regexp(r"^\d{7,}(?:\s+\(?\d+\)?)?\s*.*$"), F.caption.regexp(r"^\d{7,}(?:\s+\(?\d+\)?)?\s*.*$")))
 async def format_and_copy_text(message: types.Message):
     raw_text = (message.text or message.caption).strip()
+    scam_match = re.search(r"^\d{7,}", raw_text)
+    game_id = scam_match.group(0) if scam_match else None
+    
+    if game_id and str(game_id) in config.GLOBAL_SCAMMERS:
+        alert_text = (
+            f"<code>{raw_text}</code>\n\n"
+            f"🚨 <b>Scammer Alert!</b>\n"
+            f"ဒီ Game ID (<code>{game_id}</code>) သည် Scammer စာရင်းထဲတွင် ပါဝင်နေပါသဖြင့် ဝယ်ယူခွင့်ကို ပိတ်ပင်ထားပါသည်။ ❌"
+        )
+        return await message.reply(alert_text, parse_mode="HTML")
+--
     if re.match(r"^\d{7,}$", raw_text): formatted_raw = raw_text
     elif re.match(r"^\d{7,}\s+\d+", raw_text):
         match = re.match(r"^(\d{7,})\s+(\d+)\s*(.*)$", raw_text)
