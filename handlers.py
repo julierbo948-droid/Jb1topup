@@ -1437,7 +1437,7 @@ async def format_and_copy_text(message: types.Message):
             f"ဒီ Game ID (<code>{game_id}</code>) သည် Scammer စာရင်းထဲတွင် ပါဝင်နေပါသဖြင့် ဝယ်ယူခွင့်ကို ပိတ်ပင်ထားပါသည်။ ❌"
         )
         return await message.reply(alert_text, parse_mode="HTML")
---
+
     if re.match(r"^\d{7,}$", raw_text): formatted_raw = raw_text
     elif re.match(r"^\d{7,}\s+\d+", raw_text):
         match = re.match(r"^(\d{7,})\s+(\d+)\s*(.*)$", raw_text)
