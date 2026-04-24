@@ -2,6 +2,7 @@ import os
 import datetime
 from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
+from datetime import datetime, timedelta
 
 load_dotenv()
 MONGO_URI = os.getenv('MONGO_URI')
@@ -64,20 +65,30 @@ async def get_all_resellers():
 
 async def add_reseller(tg_id, username):
     tg_id_str = str(tg_id)
-    existing_user = await resellers_col.find_one({"tg_id": tg_id_str})
-    if not existing_user:
-        await resellers_col.insert_one({
-            "tg_id": tg_id_str,
-            "username": username,
-            "br_balance": 0.0,
-            "ph_balance": 0.0
-        })
-        return True
-    return False
+    # အရင်ရှိပြီးသားဆိုရင် update ပဲလုပ်မယ်၊ မရှိရင် အသစ်သွင်းမယ် (Upsert)
+    result = await resellers_col.update_one(
+        {"tg_id": tg_id_str},
+        {
+            "$set": {
+                "username": username,
+                "is_admin": True,
+                "last_topup_date": datetime.now() # ရက်စွဲ စမှတ်မယ်
+            },
+            "$setOnInsert": { # အသစ်သွင်းတဲ့အခါမှပဲ balance ကို 0 ထားမယ်
+                "br_balance": 0.0,
+                "ph_balance": 0.0
+            }
+        },
+        upsert=True
+    )
+    return True
 
 async def remove_reseller(tg_id):
-    result = await resellers_col.delete_one({"tg_id": str(tg_id)})
-    return result.deleted_count > 0
+    result = await resellers_col.update_one(
+        {"tg_id": str(tg_id)},
+        {"$set": {"is_admin": False}}
+    )
+    return result.modified_count > 0
 
 async def update_balance(tg_id, br_amount=0.0, ph_amount=0.0):
     await resellers_col.update_one(
