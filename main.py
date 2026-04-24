@@ -3,6 +3,7 @@ import datetime
 import concurrent.futures
 import re
 
+from handlers import remove_reseller, re_add_admin_handler
 from aiogram import BaseMiddleware, types
 from aiogram.enums import ParseMode
 
@@ -144,6 +145,9 @@ async def main():
 
     dp.message.middleware(MaintenanceMiddleware())
     dp.message.middleware(ScamAlertMiddleware())
+    dp.message.register(remove_reseller, Command("remove"))
+    dp.message.register(re_add_admin_handler, Command("readd"))
+
     
     asyncio.create_task(keep_cookie_alive())
     asyncio.create_task(schedule_daily_cookie_renewal())
