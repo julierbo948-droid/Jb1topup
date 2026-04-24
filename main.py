@@ -5,6 +5,7 @@ import re
 
 from handlers import remove_reseller, re_add_admin_handler
 from aiogram import BaseMiddleware, types
+from aiogram.filters import Command
 from aiogram.enums import ParseMode
 
 import database as db
