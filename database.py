@@ -1,8 +1,9 @@
 import os
 import datetime
+from datetime import datetime, timedelta, timezone
 from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
-from datetime import datetime, timedelta
+
 
 load_dotenv()
 MONGO_URI = os.getenv('MONGO_URI')
@@ -24,7 +25,7 @@ except Exception as e:
     print(f"❌ MongoDB ချိတ်ဆက်မှု မအောင်မြင်ပါ: {e}")
     exit()
 
-MMT = datetime.timezone(datetime.timedelta(hours=6, minutes=30))
+MMT = timezone(timedelta(hours=6, minutes=30))
 
 
 async def setup_indexes():
