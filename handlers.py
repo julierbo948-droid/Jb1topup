@@ -7,6 +7,7 @@ import asyncio
 import html
 import json
 
+from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 from easy_bby import get_random_proxy
 from aiogram import F, types
@@ -383,17 +384,82 @@ async def execute_buy_process(message, lines, regex_pattern, currency, packages_
 #    else:
 #        await message.reply(f"Reseller ID `{target_id}` is already in the list.")
 
-@dp.message(or_f(Command("remove"), F.text.regexp(r"(?i)^\.remove(?:$|\s+)")))
+async def check_admin_validity(user_id: int):
+    if user_id == OWNER_ID: return True
+    
+    user = await db.resellers_col.find_one({"tg_id": str(user_id)})
+    if not user or not user.get("is_admin"):
+        return False
+
+    last_date = user.get("last_topup_date")
+    if last_date and datetime.now() > last_date + timedelta(days=30):
+        await db.resellers_col.update_one({"tg_id": str(user_id)}, {"$set": {"is_admin": False}})
+        return False
+    
+    return True
+
+async def re_add_admin_handler(message: types.Message):
+    if message.from_user.id != OWNER_ID: return
+    
+    try:
+        parts = message.text.split()
+        if len(parts) < 2: return await message.reply("💡 Usage: <code>.readd [user_id]</code>")
+        
+        target_id = parts[1].strip()
+        user = await db.resellers_col.find_one({"tg_id": target_id})
+        
+        if not user:
+            return await message.reply("❌ User မရှိပါ။ အသစ်ဆိုလျှင် .add ကို သုံးပါ။")
+
+        old_br = user.get("br_balance", 0)
+        old_ph = user.get("ph_balance", 0)
+
+        await db.resellers_col.update_one(
+            {"tg_id": target_id},
+            {"$set": {
+                "is_admin": True,
+                "last_topup_date": datetime.now(),
+                "br_balance": 0.0,
+                "ph_balance": 0.0
+            }}
+        )
+
+        report = (
+            f"👑 <b>Admin Re-Activation Report</b>\n"
+            f"━━━━━━━━━━━━━━━━━━\n"
+            f"👤 <b>Admin ID:</b> <code>{target_id}</code>\n"
+            f"💰 <b>မူလ လက်ကျန် Coins စာရင်း:</b>\n"
+            f"🇧🇷 <b>Brazil:</b> {old_br} Coins\n"
+            f"🇵🇭 <b>Philippines:</b> {old_ph} Coins\n"
+            f"━━━━━━━━━━━━━━━━━━\n"
+            f"<i>(ဤစာရင်းကို Owner သာ မြင်ရပါသည်။)</i>"
+        )
+        await message.reply(f"✅ Admin {target_id} ကို ပြန်ခန့်အပ်ပြီး သက်တမ်းတိုးပေးလိုက်ပါပြီ။")
+        await message.bot.send_message(OWNER_ID, report, parse_mode="HTML")
+
+    except Exception as e:
+        await message.reply(f"❌ Error: {str(e)}")
+
 async def remove_reseller(message: types.Message):
-    if message.from_user.id != OWNER_ID: return await message.reply("You are not the Owner.")
+    if message.from_user.id != OWNER_ID: 
+        return await message.reply("You are not the Owner.")
+    
     parts = message.text.split()
-    if len(parts) < 2: return await message.reply("Usage format - `/remove <user_id>`")
+    if len(parts) < 2: return await message.reply("Usage: `/remove <user_id>`")
+    
     target_id = parts[1].strip()
     if target_id == str(OWNER_ID): return await message.reply("The Owner cannot be removed.")
-    if await db.remove_reseller(target_id):
-        await message.reply(f"✅ Reseller ID `{target_id}` has been removed.")
+    
+    # Status ကိုပဲ ပိတ်မယ်
+    success = await db.resellers_col.update_one(
+        {"tg_id": target_id}, 
+        {"$set": {"is_admin": False}}
+    )
+
+    if success.modified_count > 0:
+        await message.reply(f"✅ Reseller ID `{target_id}` ကို ရိုးရိုး User အဖြစ် ပြောင်းလဲလိုက်ပါပြီ။")
     else:
-        await message.reply("That ID is not in the list.")
+        await message.reply("ID မရှိပါ သို့မဟုတ် သူသည် Admin မဟုတ်ပါ။")
 
 @dp.message(or_f(Command("users"), F.text.regexp(r"(?i)^\.users$")))
 async def list_resellers(message: types.Message):
