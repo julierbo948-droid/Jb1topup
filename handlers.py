@@ -264,7 +264,7 @@ async def execute_buy_process(message, lines, regex_pattern, currency, packages_
         now = datetime.now(MMT) 
         date_str = now.strftime("%m/%d/%Y, %I:%M:%S %p")
 
-        f
+        if
         or res in line_results:
             tg_id = message.from_user.id
             user_name = message.from_user.full_name
