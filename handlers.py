@@ -1,6 +1,5 @@
 import io
 import re
-import datetime
 import time
 import random
 import asyncio
@@ -262,10 +261,11 @@ async def execute_buy_process(message, lines, regex_pattern, currency, packages_
 
         if not line_results: return
 
-        now = datetime.datetime.now(MMT) 
+        now = datetime.now(MMT) 
         date_str = now.strftime("%m/%d/%Y, %I:%M:%S %p")
 
-        for res in line_results:
+        f
+        or res in line_results:
             tg_id = message.from_user.id
             user_name = message.from_user.full_name
 
@@ -1361,7 +1361,7 @@ async def check_official_customer(message: types.Message):
         return await loading_msg.edit_text(f"❌ Search Error: {str(e)}", parse_mode=ParseMode.HTML)
         
     txt_content = f"===== OFFICIAL RECORDS SEARCH =====\n"
-    txt_content += f"Date: {datetime.datetime.now().strftime('%Y-%m-%d %I:%M %p')}\n"
+    txt_content += f"Date: {datetime.now().strftime('%Y-%m-%d %I:%M %p')}\n"
     txt_content += f"Total IDs Searched: {len(search_queries)}\n"
     txt_content += f"Total Records Found: {len(found_orders)}\n"
     txt_content += "=" * 50 + "\n\n"
@@ -1388,7 +1388,7 @@ async def check_official_customer(message: types.Message):
                 date_display = date_str
                 if date_str:
                     try:
-                        dt_obj = datetime.datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+                        dt_obj = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
                         mmt_dt = dt_obj + datetime.timedelta(hours=9, minutes=30)
                         mm_time_str = mmt_dt.strftime("%I:%M:%S %p") 
                         date_display = f"{date_str} (MM - {mm_time_str})"
