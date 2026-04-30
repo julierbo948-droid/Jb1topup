@@ -4,7 +4,6 @@ import concurrent.futures
 import re
 
 from aiogram import BaseMiddleware, types
-from aiogram.filters import Command
 from aiogram.enums import ParseMode
 
 import database as db
@@ -12,8 +11,6 @@ import config
 from config import bot, dp, MMT, OWNER_ID
 import easy_bby
 from helpers import notify_owner
-
-import handlers
 
 class MaintenanceMiddleware(BaseMiddleware):
     async def __call__(self, handler, event: types.Message, data: dict):
