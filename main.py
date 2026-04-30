@@ -12,6 +12,8 @@ from config import bot, dp, MMT, OWNER_ID
 import easy_bby
 from helpers import notify_owner
 
+import handlers
+
 class MaintenanceMiddleware(BaseMiddleware):
     async def __call__(self, handler, event: types.Message, data: dict):
         if config.IS_MAINTENANCE:
