@@ -66,16 +66,15 @@ async def get_all_resellers():
 
 async def add_reseller(tg_id, username):
     tg_id_str = str(tg_id)
-    # အရင်ရှိပြီးသားဆိုရင် update ပဲလုပ်မယ်၊ မရှိရင် အသစ်သွင်းမယ် (Upsert)
     result = await resellers_col.update_one(
         {"tg_id": tg_id_str},
         {
             "$set": {
                 "username": username,
                 "is_admin": True,
-                "last_topup_date": datetime.now() # ရက်စွဲ စမှတ်မယ်
+                "last_topup_date": datetime.now() 
             },
-            "$setOnInsert": { # အသစ်သွင်းတဲ့အခါမှပဲ balance ကို 0 ထားမယ်
+            "$setOnInsert": {
                 "br_balance": 0.0,
                 "ph_balance": 0.0
             }
