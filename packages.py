@@ -6,6 +6,7 @@ DOUBLE_DIAMOND_PACKAGES = {
 }
 
 BR_PACKAGES = {
+    'vp': [{'pid': '25': 1.20, 'name': 'Value Pack'}],
     '86': [{'pid': '13', 'price': 61.5, 'name': '86 💎'}],
     '172': [{'pid': '23', 'price': 122.0, 'name': '172 💎'}],
     '257': [{'pid': '25', 'price': 177.5, 'name': '257 💎'}],
