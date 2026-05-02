@@ -282,13 +282,13 @@ async def execute_buy_process(message, lines, regex_pattern, currency, packages_
             header_title = f"{title_prefix} {res['game_id']} ({res['zone_id']}) {res['raw_items_str'].upper()} ({currency})"
             
             report = f"<blockquote><pre>{header_title}\n"
-            report += f"===== TRANSACTION REPORT =====\n"
+            report += f"=== TRANSACTION REPORT ===\n"
 
             for pr in res['package_results']:
                 safe_ig_name = html.escape(str(pr['ig_name']))
 
                 if pr['status'] == 'success':
-                    report += f"━━━━━━━━━━━━━━━━━━━━━\n"
+                    report += f"━━━━━━━━━━━━━━━━━━━\n"
                     report += f"GAME ID      : {res['game_id']} {res['zone_id']}\n"
                     report += f"IG NAME      : {safe_ig_name}\n"
                     report += f"ITEM         : {pr['pkg_name']} 💎| ✅\n"
@@ -322,13 +322,13 @@ async def execute_buy_process(message, lines, regex_pattern, currency, packages_
                             if "unable" in error_text or "fail" in error_text or "error" in error_text:
                                 display_err = "Weekly Pass Limit Exceeded"
 
-                    report += f"━━━━━━━━━━━━━━━━━━━━━\n"
+                    report += f"━━━━━━━━━━━━━━━━━━━\n"
                     report += f"GAME ID      : {res['game_id']} {res['zone_id']}\n"
                     report += f"IG NAME      : {safe_ig_name}\n"
                     report += f"ITEM         : {pr['pkg_name']} 💎| ❌\n"
                     report += f"ERROR        : {display_err}\n\n"
 
-            report += f"━━━━━━━━━━━━━━━━━━━━━\n"
+            report += f"━━━━━━━━━━━━━━━━━━━\n"
             report += f"DATE         : {date_str}\n"
             report += f"===== ACCOUNT INFO =====\n"
             report += f"INITIAL      : ${initial_bal_for_receipt:,.2f}\n"
